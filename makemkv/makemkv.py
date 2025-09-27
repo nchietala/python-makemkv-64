@@ -19,12 +19,15 @@ from .types import Disc, Drive, MakeMKVOutput, ProgressUpdateHandlerType, Stream
 
 if platform.system() == "Windows":
     MAKEMKVCON_BINARIES = [
+        "makemkvcon64",
+        str(WindowsPath("C:/Program Files/MakeMKV/makemkvcon64.exe")),
+        str(WindowsPath("C:/Program Files (x86)/MakeMKV/makemkvcon64.exe")),
         "makemkvcon",
         str(WindowsPath("C:/Program Files/MakeMKV/makemkvcon.exe")),
         str(WindowsPath("C:/Program Files (x86)/MakeMKV/makemkvcon.exe")),
     ]
 else:
-    MAKEMKVCON_BINARIES = ["makemkvcon"]
+    MAKEMKVCON_BINARIES = ["makemkvcon64", "makemkvcon"]
 
 logger = logging.getLogger(__package__)
 makemkvcon_logger = logger.getChild("makemkvcon")
@@ -84,7 +87,7 @@ class MakeMKV:
         cache = self.cache if cache is None else cache
         minlength = self.minlength if minlength is None else minlength
         cmd = [
-            _find_makemkvcon_binary(),
+            find_makemkvcon_binary(),
             "info",
             self._input,
             "--robot",
@@ -125,7 +128,7 @@ class MakeMKV:
         cache = self.cache if cache is None else cache
         minlength = self.minlength if minlength is None else minlength
         cmd = [
-            _find_makemkvcon_binary(),
+            find_makemkvcon_binary(),
             "mkv",
             self._input,
             str(title),
@@ -167,7 +170,7 @@ class MakeMKV:
         cache = self.cache if cache is None else cache
         minlength = self.minlength if minlength is None else minlength
         cmd = [
-            _find_makemkvcon_binary(),
+            find_makemkvcon_binary(),
             "backup",
             self._input,
             str(output_dir),
@@ -503,7 +506,7 @@ def _is_valid_typeddict_item(
     return isinstance(value, annotations[key])
 
 
-def _find_makemkvcon_binary() -> str:
+def find_makemkvcon_binary() -> str:
     for bin_path in MAKEMKVCON_BINARIES:
         if shutil.which(bin_path) is not None:
             return bin_path
